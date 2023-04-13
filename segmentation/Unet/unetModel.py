@@ -50,10 +50,10 @@ class UnetEncoder(nn.Module):
 
 
 class DecoderLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, upscale="inerpolate"):
+    def __init__(self, in_channels, out_channels, upscale_mode="inerpolate"):
         super().__init__()
         
-        if upscale == "inerpolate":
+        if upscale_mode == "inerpolate":
             self.upscale = nn.Sequential(
                 ConvBlock(in_channels, out_channels, kernel=3),
                 nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
@@ -72,12 +72,12 @@ class DecoderLayer(nn.Module):
 
 
 class UnetDecoder(nn.Module):
-    def __init__(self, in_channels, prms=reversed([64,128,256,512])):
+    def __init__(self, in_channels, prms=reversed([64,128,256,512]), upscale_mode="convtranspose"):
         super().__init__()
         
         self.layers = nn.ModuleList()
         for prm in prms:
-            self.layers.append(DecoderLayer(in_channels, prm))
+            self.layers.append(DecoderLayer(in_channels, prm, upscale_mode=upscale_mode))
             in_channels = prm
 
     def forward(self, x, skip_connections):
@@ -90,7 +90,7 @@ class UnetDecoder(nn.Module):
 
 class UnetModel(nn.Module):
 
-    def __init__(self, in_channels, num_classes, prms=[64,128,256,512]) -> None:
+    def __init__(self, in_channels, num_classes, prms=[64,128,256,512], upscale_mode="convtranspose") -> None:
         super().__init__()
         self.in_channels = in_channels
         self.num_classes = num_classes
@@ -98,7 +98,7 @@ class UnetModel(nn.Module):
 
         self.encoder = UnetEncoder(in_channels, prms)
         self.bottom = DoubleConvBlock(prms[-1], prms[-1]*2, kernel=3)
-        self.decoder = UnetDecoder(prms[-1]*2, reversed(prms))
+        self.decoder = UnetDecoder(prms[-1]*2, reversed(prms), upscale_mode)
         self.classifier = nn.Conv2d(prms[0], num_classes, kernel_size=1, padding=0)
         self.dropout = nn.Dropout2d(0.5)
         # ConvBlock(prms[0], num_classes, kernel=1, padding=0, activation=None)

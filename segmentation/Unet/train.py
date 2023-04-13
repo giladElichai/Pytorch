@@ -92,10 +92,10 @@ def main():
 
     #data = np.load(dataset_path/"images.npy", allow_pickle=True)
 
-    learning_rate = 0.0001
-    epochs = 30
-    batch_size = 8
-    input_size = (128,128)
+    learning_rate = 0.001
+    epochs = 35
+    batch_size = 4
+    input_size = (256,256)
 
     transforms = tt.Compose([tt.ToTensor()])
 
