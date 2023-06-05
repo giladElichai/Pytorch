@@ -28,9 +28,9 @@ class Resblock(nn.Module):
         self.num_classes = filters
         
         stride = 2 if downsample else 1
-        self.conv1 = ConvBlock(in_channels, filters, kernel=1, stride=stride)
+        self.conv1 = ConvBlock(in_channels, filters, kernel=1, stride=stride, padding=0)
         self.conv2 = ConvBlock(filters, filters, kernel=3, stride=1)
-        self.conv3 = ConvBlock(filters, filters*4, kernel=1, stride=1)
+        self.conv3 = ConvBlock(filters, filters*4, kernel=1, stride=1, padding=0)
         self.res_conv = None
         if downsample or filters != in_channels:
             self.res_conv = ConvBlock(filters, filters*4, kernel=1, stride=stride)
