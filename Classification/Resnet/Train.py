@@ -17,8 +17,7 @@ import torchvision.transforms as tt
 
 
 from Dataset import *
-from SegUtils import *
-from LinknetModel import LinknetModel
+from ResnetModel import ResnetModel
 
 cuda = True if torch.cuda.is_available() else False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -103,10 +102,10 @@ def main():
     val_ds = segmentationDataset(valid_data, class_map, input_size, transforms)
     val_loader = torch.utils.data.DataLoader(val_ds, batch_size=batch_size, shuffle=False, pin_memory=True)
 
-    model = LinknetModel(3, num_classes, 64, 4).to(device)
+    model = UnetModel(3, num_classes, [64, 128, 256, 512]).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    chackpoint_dir = dataset_path/"linknetmodel_chackpoints"
+    chackpoint_dir = dataset_path/"model_chackpoints"
     os.makedirs(chackpoint_dir, exist_ok=True)
     model, history = train_model( train_loader, val_loader, model, optimizer, criterion, epochs, chackpoint_dir=chackpoint_dir)
 

@@ -16,10 +16,10 @@ import torch.nn.functional as F
 import torchvision.transforms as tt
 
 
-from dataset import *
-from segUtils import *
+from Dataset import *
+from SegUtils import *
 #from models import UNET
-from unetModel import UnetModel
+from UnetModel import UnetModel
 
 cuda = True if torch.cuda.is_available() else False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
